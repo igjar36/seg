@@ -49,10 +49,10 @@ SEXP envconstruct(SEXP x, SEXP y, SEXP v, SEXP dim, SEXP p, SEXP useExp,
         dxy = sqrt(dx*dx + dy*dy);
       }
       
-      if (expF == 0) // Inverse distance weight
-        weight = 1/pow(dxy + error, power);
-      else           // Inverse distance weight using an exponential function
-        weight = exp(dxy * power * -1);     
+      if (expF == 0) // biweight weight (normal-like)
+        weight = pow(1 - pow(dxy/dist, power), power);
+      else           // normalized and scaled inverse exponential
+        weight = (exp(dxy/dist * power * -1) - exp(power * -1))/(1 - exp(power * -1));    
 
       // Get weighted total
       for (k = 0; k < ncol; k++) {
